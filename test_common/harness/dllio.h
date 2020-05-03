@@ -16,16 +16,32 @@
 #include<tchar.h>
 #endif
 
-// stdio.h
-int dllprintf(const char * _Format, ...);
-int dllfprintf(FILE *f, const char * _Format, ...);
-int dllvprintf(const char * _Format, va_list _ArgList);
-int dllvfprintf(FILE *f, const char * _Format, va_list _ArgList);
-int dllfputs(const char *str, FILE *f);
-int dllputs(const char *str);
-int dllputchar(int c);
-int dllfputc(int c, FILE *f);
+#ifdef __cplusplus
+extern "C" {
+#endif
+	
+	// stdio.h
+	
+	int dllprintf(const char * _Format, ...);
+	int dllfprintf(FILE *f, const char * _Format, ...);
+	int dllvprintf(const char * _Format, va_list _ArgList);
+	int dllvfprintf(FILE *f, const char * _Format, va_list _ArgList);
+	int dllfputs(const char *str, FILE *f);
+	int dllputs(const char *str);
+	int dllputchar(int c);
+	int dllfputc(int c, FILE *f);
 
+#ifdef _MSC_VER
+	__declspec(noreturn) void dllexit(int exitcode);
+	__declspec(noreturn) void dll_exit(int exitcode);
+#else
+	void dllexit(int exitcode) __attribute__ ((noreturn));
+	void dll_exit(int exitcode) __attribute__ ((noreturn));
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 ////////////////////////////////////////////////////////////////////////
 
 #ifdef _CRT_TERMINATE_DEFINED
@@ -34,15 +50,6 @@ int dllfputc(int c, FILE *f);
 
 #define _CRT_TERMINATE_DEFINED 1
 
-#ifdef _MSC_VER
-__declspec(noreturn) void dllexit(int exitcode);
-__declspec(noreturn) void dll_exit(int exitcode);
-#else
-void dllexit(int exitcode) __attribute__ ((noreturn));
-void dll_exit(int exitcode) __attribute__ ((noreturn));
-#endif
-
-int dllsetexithook(void);
 
 #define printf dllprintf
 #define fprintf dllfprintf

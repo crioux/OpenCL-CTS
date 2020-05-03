@@ -13,6 +13,12 @@
 #include<unordered_set>
 #include<iostream>
 
+#ifdef _MSC_VER
+#define DLLEXPORT __declspec(dllexport)
+#else
+#define DLLEXPORT __attribute__((visibility("default")))
+#endif
+
 #include "dllio_hooks.h"
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +224,7 @@ extern "C"
 		return fputc(c, f);
 	}
 
-	void dllexit(int exitcode)
+	void dllexit(int exitcode) noexcept(false)
 	{
 		dllexitcode = exitcode;
 		dllexited = 1;
@@ -230,7 +236,7 @@ extern "C"
 		dllexit(exitcode);
 	}
 
-	int dllio_main(int argc, char **argv, struct DLLIO_HOOKS *hooks)
+	DLLEXPORT int dllio_main(int argc, char **argv, struct DLLIO_HOOKS *hooks)
 	{
 
 //		int tmp = _CrtSetDbgFlag(_CRTDBG_REPORT_FLAG);
@@ -239,6 +245,9 @@ extern "C"
 
 		try
 		{
+            auto old_cout_rdbuf = std::cout.rdbuf();
+            auto old_cerr_rdbuf = std::cerr.rdbuf();
+
 			if (hooks)
 			{
 				hook_ctx = hooks->ctx;
@@ -249,11 +258,23 @@ extern "C"
                 cerr_stream = hooks->cerr_stream; 
                 
                 //std::cin.rdbuf(cin_stream->rdbuf());
-                std::cout.rdbuf(cout_stream->rdbuf());
-                std::cerr.rdbuf(cerr_stream->rdbuf());
+
+				if (cout_stream)
+					std::cout.rdbuf(cout_stream->rdbuf());
+                if (cerr_stream)
+					std::cerr.rdbuf(cerr_stream->rdbuf());
             }
 
 			int ret = main(argc, argv);
+
+            if (cout_stream)
+            {
+                std::cout.rdbuf(old_cout_rdbuf);
+            }
+            if (cerr_stream)
+            {
+                std::cerr.rdbuf(old_cerr_rdbuf);
+            }
 
 			return ret;
 		}

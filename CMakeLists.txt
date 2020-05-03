@@ -224,9 +224,15 @@ file(COPY "${CLConform_SOURCE_DIR}/test_conformance/compiler/includeTestDirector
 file(COPY "${CLConform_SOURCE_DIR}/test_conformance/compiler/secondIncludeTestDirectory" DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_conformance/compiler)
 
 # ... For running the compiler test with VisualStudio.
-if(MSVC)
-  file(COPY "${CLConform_SOURCE_DIR}/test_conformance/compiler/includeTestDirectory" DESTINATION "${CLConform_SOURCE_DIR}/build/test_conformance/compiler")
-  file(COPY "${CLConform_SOURCE_DIR}/test_conformance/compiler/secondIncludeTestDirectory" DESTINATION "${CLConform_SOURCE_DIR}/build/test_conformance/compiler")
-endif(MSVC)
+# ---
+#if(MSVC)
+#  file(COPY "${CLConform_SOURCE_DIR}/test_conformance/compiler/includeTestDirectory" DESTINATION "${CLConform_SOURCE_DIR}/build/test_conformance/compiler")
+#  file(COPY "${CLConform_SOURCE_DIR}/test_conformance/compiler/secondIncludeTestDirectory" DESTINATION "${CLConform_SOURCE_DIR}/build/test_conformance/compiler")
+#endif(MSVC)
+# ---
 
 set_property(TARGET COPY_FILES${CONFORMANCE_SUFFIX} PROPERTY FOLDER "CONFORMANCE${CONFORMANCE_SUFFIX}")
+
+# ---
+set(CONFORMANCE_TEST_TARGETS ${CONFORMANCE_TEST_TARGETS} PARENT_SCOPE)
+# ---

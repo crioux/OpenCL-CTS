@@ -81,3 +81,7 @@ endforeach()
 foreach(FILE test_conformance/${PY_FILES})
 
 endforeach()
+
+# ---
+set(CONFORMANCE_TEST_TARGETS ${CONFORMANCE_TEST_TARGETS} PARENT_SCOPE)
+# ---

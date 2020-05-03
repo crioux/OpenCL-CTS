@@ -12,8 +12,17 @@ set (SPIR_SOURCES
     ../math_brute_force/FunctionList.cpp
 )
 
-add_executable(${SPIR_OUT}
-    ${SPIR_SOURCES})
+# add_executable(${SPIR_OUT}
+#    ${SPIR_SOURCES})
+
+# ---
+add_library(${SPIR_OUT} SHARED ${SPIR_SOURCES})
+set_property(TARGET ${SPIR_OUT} PROPERTY WINDOWS_EXPORT_ALL_SYMBOLS YES)
+LIST(APPEND CONFORMANCE_TEST_TARGETS ${SPIR_OUT})
+set(CONFORMANCE_TEST_TARGETS ${CONFORMANCE_TEST_TARGETS} PARENT_SCOPE)
+set_property(TARGET ${SPIR_OUT} PROPERTY FOLDER "CONFORMANCE${CONFORMANCE_SUFFIX}")
+# ---
+
 
 if(UNIX)
     set_target_properties(${SPIR_OUT} PROPERTIES
@@ -64,3 +73,13 @@ foreach(input_file ${SPIR_FILES})
     COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${input_file}" "$<TARGET_FILE_DIR:${SPIR_OUT}>/"
 )
 endforeach(input_file)
+
+# ---
+FOREACH(source ${SPIR_FILES})
+    IF(MSVC)
+        SET_PROPERTY(SOURCE ${source} APPEND_STRING PROPERTY COMPILE_FLAGS " /FI\"dllio.h\" ")
+    ELSE()
+        SET_PROPERTY(SOURCE ${source} APPEND_STRING PROPERTY COMPILE_FLAGS " -include \"dllio.h\" ")
+    ENDIF()
+ENDFOREACH()
+# ---
